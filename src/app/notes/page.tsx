@@ -8,8 +8,10 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/contexts/auth-context'
 import { useToast } from '@/hooks/use-toast'
+import { generateSummary } from '@/lib/ai-service'
+import { uploadFile, validateFile } from '@/lib/file-upload'
 import { createClient } from '@/lib/supabase/client'
-import { Note } from '@/lib/types'
+import { FileUploadProgress, Note } from '@/lib/types'
 import { ArrowLeft, Edit, FileText, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -27,6 +29,8 @@ export default function NotesPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [editingNote, setEditingNote] = useState<Note | null>(null)
   const [formData, setFormData] = useState({ title: '', content: '' })
+  const [fileUploads, setFileUploads] = useState<FileUploadProgress[]>([])
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -188,6 +192,119 @@ export default function NotesPage() {
     setEditingNote(note)
     setFormData({ title: note.title, content: note.content })
     setIsEditDialogOpen(true)
+  }
+
+  const handleFileUpload = async (files: FileList) => {
+    if (!user) return
+
+    const fileArray = Array.from(files)
+    
+    // Validate files
+    for (const file of fileArray) {
+      const validation = validateFile(file)
+      if (!validation.valid) {
+        toast({
+          title: "Invalid File",
+          description: validation.error,
+          variant: "destructive"
+        })
+        return
+      }
+    }
+
+    // Add files to upload queue
+    const newUploads = fileArray.map(file => ({
+      file,
+      progress: 0,
+      status: 'uploading' as const
+    }))
+    
+    setFileUploads(prev => [...prev, ...newUploads])
+
+    // Upload files
+    for (let i = 0; i < fileArray.length; i++) {
+      const file = fileArray[i]
+      const uploadIndex = fileUploads.length + i
+      
+      try {
+        const result = await uploadFile(file, user.id, (progress) => {
+          setFileUploads(prev => prev.map((upload, index) => 
+            index === uploadIndex ? { ...upload, progress } : upload
+          ))
+        })
+
+        if (result.success && result.fileUpload) {
+          setFileUploads(prev => prev.map((upload, index) => 
+            index === uploadIndex ? { ...upload, status: 'completed' } : upload
+          ))
+          
+          // Auto-fill form with extracted text if available
+          if (result.fileUpload.extracted_text) {
+            setFormData(prev => ({
+              ...prev,
+              title: prev.title || file.name.split('.')[0],
+              content: prev.content + (prev.content ? '\n\n' : '') + result.fileUpload!.extracted_text!
+            }))
+          }
+        } else {
+          setFileUploads(prev => prev.map((upload, index) => 
+            index === uploadIndex ? { ...upload, status: 'error', error: result.error } : upload
+          ))
+        }
+      } catch (error) {
+        setFileUploads(prev => prev.map((upload, index) => 
+          index === uploadIndex ? { 
+            ...upload, 
+            status: 'error', 
+            error: error instanceof Error ? error.message : 'Upload failed' 
+          } : upload
+        ))
+      }
+    }
+  }
+
+  const handleGenerateSummary = async () => {
+    if (!formData.content.trim()) {
+      toast({
+        title: "No Content",
+        description: "Please add some content to generate a summary",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setIsGeneratingSummary(true)
+    
+    try {
+      const summary = await generateSummary({
+        content: formData.content,
+        maxLength: 200,
+        style: 'bullet'
+      })
+      
+      setFormData(prev => ({
+        ...prev,
+        content: prev.content + '\n\n--- AI Summary ---\n' + summary.summary
+      }))
+      
+      toast({
+        title: "Summary Generated",
+        description: "AI summary has been added to your note",
+        variant: "success"
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate summary",
+        variant: "destructive"
+      })
+    } finally {
+      setIsGeneratingSummary(false)
+    }
+  }
+
+  const removeFileUpload = (index: number) => {
+    setFileUploads(prev => prev.filter((_, i) => i !== index))
   }
 
   if (loading || loadingNotes) {

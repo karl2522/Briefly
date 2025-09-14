@@ -1,16 +1,23 @@
--- Briefly Study Tool - Enhanced Database Schema
+-- Briefly Study Tool - Complete Database Schema
 -- Run this in your Supabase SQL Editor
 
--- 1. Update existing notes table with study features
-ALTER TABLE notes 
-ADD COLUMN IF NOT EXISTS file_url TEXT,
-ADD COLUMN IF NOT EXISTS file_name TEXT,
-ADD COLUMN IF NOT EXISTS file_type TEXT,
-ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}',
-ADD COLUMN IF NOT EXISTS difficulty_level INTEGER DEFAULT 1 CHECK (difficulty_level >= 1 AND difficulty_level <= 5),
-ADD COLUMN IF NOT EXISTS study_count INTEGER DEFAULT 0,
-ADD COLUMN IF NOT EXISTS last_studied TIMESTAMP WITH TIME ZONE,
-ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT false;
+-- 1. Create notes table with all study features
+CREATE TABLE IF NOT EXISTS notes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  file_url TEXT,
+  file_name TEXT,
+  file_type TEXT,
+  tags TEXT[] DEFAULT '{}',
+  difficulty_level INTEGER DEFAULT 1 CHECK (difficulty_level >= 1 AND difficulty_level <= 5),
+  study_count INTEGER DEFAULT 0,
+  last_studied TIMESTAMP WITH TIME ZONE,
+  is_public BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
 
 -- 2. Create user_profiles table
 CREATE TABLE IF NOT EXISTS user_profiles (
@@ -92,6 +99,7 @@ CREATE TABLE IF NOT EXISTS study_achievements (
 );
 
 -- 8. Enable Row Level Security (RLS) on all tables
+ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE flashcards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE note_summaries ENABLE ROW LEVEL SECURITY;
@@ -99,7 +107,20 @@ ALTER TABLE study_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE file_uploads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE study_achievements ENABLE ROW LEVEL SECURITY;
 
--- 9. Create RLS policies for user_profiles
+-- 9. Create RLS policies for notes
+CREATE POLICY "Users can view their own notes" ON notes
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own notes" ON notes
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own notes" ON notes
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own notes" ON notes
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- 10. Create RLS policies for user_profiles
 CREATE POLICY "Users can view their own profile" ON user_profiles
   FOR SELECT USING (auth.uid() = id);
 
@@ -135,14 +156,14 @@ CREATE POLICY "Users can update their own summaries" ON note_summaries
 CREATE POLICY "Users can delete their own summaries" ON note_summaries
   FOR DELETE USING (auth.uid() = user_id);
 
--- 12. Create RLS policies for study_sessions
+-- 13. Create RLS policies for study_sessions
 CREATE POLICY "Users can view their own sessions" ON study_sessions
   FOR SELECT USING (auth.uid() = user_id);
 
 CREATE POLICY "Users can insert their own sessions" ON study_sessions
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- 13. Create RLS policies for file_uploads
+-- 14. Create RLS policies for file_uploads
 CREATE POLICY "Users can view their own uploads" ON file_uploads
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -162,7 +183,7 @@ CREATE POLICY "Users can view their own achievements" ON study_achievements
 CREATE POLICY "Users can insert their own achievements" ON study_achievements
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- 15. Create indexes for better performance
+-- 16. Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
 CREATE INDEX IF NOT EXISTS idx_notes_tags ON notes USING GIN(tags);
 CREATE INDEX IF NOT EXISTS idx_notes_difficulty ON notes(difficulty_level);
@@ -181,7 +202,7 @@ CREATE INDEX IF NOT EXISTS idx_study_sessions_created_at ON study_sessions(creat
 CREATE INDEX IF NOT EXISTS idx_file_uploads_user_id ON file_uploads(user_id);
 CREATE INDEX IF NOT EXISTS idx_file_uploads_note_id ON file_uploads(note_id);
 
--- 16. Create functions for updating timestamps
+-- 17. Create functions for updating timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -190,7 +211,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- 17. Create triggers for updated_at
+-- 18. Create triggers for updated_at
 CREATE TRIGGER update_notes_updated_at BEFORE UPDATE ON notes
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -206,7 +227,7 @@ CREATE TRIGGER update_note_summaries_updated_at BEFORE UPDATE ON note_summaries
 CREATE TRIGGER update_file_uploads_updated_at BEFORE UPDATE ON file_uploads
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- 18. Create function to generate flashcards from notes
+-- 19. Create function to generate flashcards from notes
 CREATE OR REPLACE FUNCTION generate_flashcards_from_note(
   p_note_id UUID,
   p_user_id UUID,
@@ -240,7 +261,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 19. Create function to calculate study statistics
+-- 20. Create function to calculate study statistics
 CREATE OR REPLACE FUNCTION get_user_study_stats(p_user_id UUID)
 RETURNS TABLE(
   total_notes INTEGER,
