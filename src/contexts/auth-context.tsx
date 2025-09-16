@@ -2,13 +2,18 @@
 
 import { createClient } from '@/lib/supabase/client'
 import { Session, User } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (
+    email: string,
+    password: string,
+    metadata?: { firstName?: string; lastName?: string; school?: string }
+  ) => Promise<{ error: any }>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
 }
@@ -20,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     // Get initial session
@@ -41,10 +47,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [supabase.auth])
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    metadata?: { firstName?: string; lastName?: string; school?: string }
+  ) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          first_name: metadata?.firstName ?? null,
+          last_name: metadata?.lastName ?? null,
+          school: metadata?.school ?? null,
+        },
+      },
     })
     return { error }
   }
@@ -59,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut()
+    router.push('/')
   }
 
   const value = {

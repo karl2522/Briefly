@@ -1,79 +1,30 @@
-'use client'
+"use client"
 
 import { LogoText } from '@/components/logo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Textarea } from '@/components/ui/textarea'
-import { BookOpen, Bot, Brain, FileText, LogIn, Send, Upload, User } from 'lucide-react'
+import { BookOpen, Brain, Check, CheckCircle, FileText, LogIn, Quote, ShieldCheck, Sparkles, Star, Timer, Upload, Users, Zap } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
-
-interface ChatMessage {
-  id: string
-  content: string
-  role: 'user' | 'assistant'
-  timestamp: Date
-}
 
 export default function LandingPage() {
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
-  const [chatInput, setChatInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-
-  const handleSendMessage = async () => {
-    if (!chatInput.trim()) return
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      content: chatInput,
-      role: 'user',
-      timestamp: new Date()
-    }
-
-    setChatMessages(prev => [...prev, userMessage])
-    setChatInput('')
-    setIsTyping(true)
-
-    // Simulate AI response (replace with actual AI API call)
-    setTimeout(() => {
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        content: `I understand you want help with: "${userMessage.content}". I can help you with note-taking, summarization, creating flashcards, and studying strategies. What specific assistance do you need?`,
-        role: 'assistant',
-        timestamp: new Date()
-      }
-      setChatMessages(prev => [...prev, aiMessage])
-      setIsTyping(false)
-    }, 1500)
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
+      {/* Top Nav */}
       <nav className="bg-white/80 backdrop-blur-md shadow-soft border-b border-white/20 relative z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center">
-              <Link href="/">
-                <LogoText className="text-lg sm:text-xl" />
-              </Link>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
+            <Link href="/">
+              <LogoText className="text-lg sm:text-xl" />
+            </Link>
+            <div className="flex items-center gap-2">
               <Link href="/login">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="border-purple-200 text-purple-700 hover:bg-purple-50 cursor-pointer"
-                >
-                  <LogIn className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                  <span className="hidden sm:inline">Sign In</span>
+                <Button variant="outline" size="sm" className="cursor-pointer">
+                  <LogIn className="h-4 w-4 mr-2" /> Sign In
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button size="sm" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white cursor-pointer">
+                  Get Started Free
                 </Button>
               </Link>
             </div>
@@ -81,248 +32,313 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Free AI Study Tools</h1>
-            <p className="mt-2 text-gray-600">
-              Upload documents, create notes, generate flashcards, and get instant help with your studies using AI.
-            </p>
-          </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* AI Chat Assistant Card */}
-          <div className="lg:col-span-2">
-            <Card className="bg-white border-0 shadow-lg h-[700px] flex flex-col">
-              <CardHeader className="pb-4 border-b border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600">
-                    <Bot className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold text-gray-900">Briefly AI</CardTitle>
-                    <CardDescription className="text-sm text-gray-600">
-                      Get instant help with your studies
-                    </CardDescription>
-                  </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero */}
+        <section className="py-16 sm:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200 bg-white/70 px-3 py-1 text-xs text-purple-700 shadow-soft">
+                <Sparkles className="h-3.5 w-3.5" /> New: Flashcards and AI Summaries
+              </div>
+              <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">
+                AI tools that make studying
+                <span className="block bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">faster, smarter, and stress-free.</span>
+              </h1>
+              <p className="mt-4 text-gray-700 text-base sm:text-lg max-w-2xl">
+                Upload a document and get clean notes, flashcards, and concise summaries in seconds.
+              </p>
+              <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
+                <li className="flex items-center gap-2"><Zap className="h-4 w-4 text-purple-600" /> 3x faster review vs manual notes</li>
+                <li className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-purple-600" /> Your files stay private</li>
+                <li className="flex items-center gap-2"><Star className="h-4 w-4 text-purple-600" /> High‑quality, citation‑ready summaries</li>
+                <li className="flex items-center gap-2"><Check className="h-4 w-4 text-purple-600" /> Export to flashcards in one click</li>
+              </ul>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/login">
+                  <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white cursor-pointer">
+                    Get Started Free
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button variant="outline" className="cursor-pointer">Try it now</Button>
+                </Link>
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-green-600" /> No credit card required
                 </div>
-              </CardHeader>
-              
-              <CardContent className="flex-1 flex flex-col p-0">
-                <ScrollArea className="flex-1 p-6">
-                  {chatMessages.length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="p-4 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                        <Brain className="h-8 w-8 text-purple-600" />
+                <div className="h-4 w-px bg-gray-300 hidden sm:block" />
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-purple-600" /> Trusted by 1,200+ students
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-5">
+              <Card className="shadow-soft-lg border-0">
+                <CardHeader>
+                  <CardTitle className="text-lg">See it in action</CardTitle>
+                  <CardDescription>Upload a doc → Get summarized notes in seconds</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-xl border bg-white shadow-soft overflow-hidden">
+                    {/* Browser chrome */}
+                    <div className="flex items-center justify-between px-4 py-2 border-b bg-gradient-to-r from-slate-50 to-white">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2.5 w-2.5 rounded-full bg-red-400"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-green-400"></span>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Ask me anything!</h3>
-                      <p className="text-gray-600 mb-4 text-sm">
-                        I can help with note-taking, summarization, flashcards, and study strategies.
-                      </p>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setChatInput("Help me create flashcards")}
-                          className="text-xs cursor-pointer"
-                        >
-                          Create Flashcards
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setChatInput("Summarize this document")}
-                          className="text-xs cursor-pointer"
-                        >
-                          Summarize
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setChatInput("Study tips")}
-                          className="text-xs cursor-pointer"
-                        >
-                          Study Tips
-                        </Button>
-                      </div>
+                      <div className="text-[10px] sm:text-xs text-gray-500 truncate max-w-[60%]">briefly.app/dashboard</div>
+                      <div className="h-3 w-12 bg-gray-200 rounded"></div>
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {chatMessages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          {message.role === 'assistant' && (
-                            <div className="p-2 rounded-lg bg-gradient-to-br from-purple-100 to-indigo-100 flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                              <Bot className="h-4 w-4 text-purple-600" />
-                            </div>
-                          )}
-                          <div
-                            className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                              message.role === 'user'
-                                ? 'bg-gradient-to-br from-purple-500 to-purple-600 text-white'
-                                : 'bg-gray-100 text-gray-900'
-                            }`}
-                          >
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                            <p className={`text-xs mt-1 ${
-                              message.role === 'user' ? 'text-purple-100' : 'text-gray-500'
-                            }`}>
-                              {message.timestamp.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}
-                            </p>
+
+                    {/* App preview */}
+                    <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[160px_1fr]">
+                      {/* Sidebar */}
+                      <div className="border-r p-2 space-y-2 bg-slate-50/60">
+                        <button className="w-full flex items-center gap-1.5 rounded-md border bg-white px-2 py-2 text-left text-xs text-gray-700 hover:bg-purple-50 overflow-hidden whitespace-nowrap">
+                          <FileText className="h-4 w-4 text-purple-600" /> AI Notes
+                        </button>
+                        <button className="w-full flex items-center gap-1.5 rounded-md border bg-white px-2 py-2 text-left text-xs text-gray-700 hover:bg-blue-50 overflow-hidden whitespace-nowrap">
+                          <BookOpen className="h-4 w-4 text-blue-600" /> Flashcards
+                        </button>
+                        <button className="w-full flex items-center gap-1.5 rounded-md border bg-white px-2 py-2 text-left text-xs text-gray-700 hover:bg-orange-50 overflow-hidden whitespace-nowrap">
+                          <Upload className="h-4 w-4 text-orange-600" /> Upload
+                        </button>
+                      </div>
+
+                      {/* Main */}
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900">AI Study Assistant</p>
+                            <p className="text-xs text-gray-500">Summaries • Notes • Flashcards</p>
                           </div>
-                          {message.role === 'user' && (
-                            <div className="p-2 rounded-lg bg-gray-100 flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                              <User className="h-4 w-4 text-gray-600" />
-                            </div>
-                          )}
+                          <div className="text-[10px] text-gray-500">Preview</div>
                         </div>
-                      ))}
-                      {isTyping && (
-                        <div className="flex gap-3 justify-start">
-                          <div className="p-2 rounded-lg bg-gradient-to-br from-purple-100 to-indigo-100 flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                            <Bot className="h-4 w-4 text-purple-600" />
+
+                        {/* Chat area mock */}
+                        <div className="h-44 sm:h-52 rounded-lg border bg-white p-3 space-y-2 overflow-hidden">
+                          <div className="flex gap-2 items-start">
+                            <div className="h-6 w-6 rounded-md bg-purple-100 flex items-center justify-center">
+                              <Brain className="h-3.5 w-3.5 text-purple-600" />
+                            </div>
+                            <div className="max-w-[80%] rounded-md bg-gray-100 px-3 py-2">
+                              <p className="text-xs text-gray-800">Upload a PDF and I’ll produce a 5‑minute summary and key terms.</p>
+                            </div>
                           </div>
-                          <div className="bg-gray-100 rounded-lg px-4 py-3">
-                            <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          <div className="flex gap-2 items-start justify-end">
+                            <div className="max-w-[80%] rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 text-white">
+                              <p className="text-xs">Summarize chapter 3 and make 10 flashcards.</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 items-start">
+                            <div className="h-6 w-6 rounded-md bg-purple-100 flex items-center justify-center">
+                              <Brain className="h-3.5 w-3.5 text-purple-600" />
+                            </div>
+                            <div className="max-w-[85%] rounded-md bg-gray-100 px-3 py-2">
+                              <p className="text-xs text-gray-800"><span className="font-medium">Summary:</span> Chapter 3 introduces …</p>
+                              <p className="mt-1 text-[11px] text-gray-600">• Core concepts A, B, C • Key formula • 5 takeaways</p>
                             </div>
                           </div>
                         </div>
-                      )}
+
+                        {/* Input */}
+                        <div className="mt-3 flex items-center gap-2">
+                          <div className="flex-1 h-9 rounded-md border bg-white px-3 text-xs text-gray-500 flex items-center">Ask a question or paste text…</div>
+                          <button className="h-9 rounded-md bg-gradient-to-r from-purple-600 to-indigo-600 px-3 text-xs text-white">Send</button>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </ScrollArea>
-                
-                <div className="border-t border-gray-100 p-4">
-                  <div className="flex gap-2">
-                    <Textarea
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything about studying..."
-                      className="flex-1 min-h-[40px] max-h-24 resize-none"
-                      rows={1}
-                    />
-                    <Button
-                      onClick={handleSendMessage}
-                      disabled={!chatInput.trim() || isTyping}
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 cursor-pointer"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <div className="p-2 rounded-md bg-purple-100 w-fit mb-2"><FileText className="h-5 w-5 text-purple-600" /></div>
+                <CardTitle>AI Note Maker</CardTitle>
+                <CardDescription>Create concise, well-structured notes from any document.</CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <div className="p-2 rounded-md bg-blue-100 w-fit mb-2"><BookOpen className="h-5 w-5 text-blue-600" /></div>
+                <CardTitle>Flashcards</CardTitle>
+                <CardDescription>Turn notes into smart, spaced-repetition flashcards.</CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <div className="p-2 rounded-md bg-indigo-100 w-fit mb-2"><Brain className="h-5 w-5 text-indigo-600" /></div>
+                <CardTitle>Summarizer</CardTitle>
+                <CardDescription>Instant summaries that keep the key insights.</CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="border-0 shadow-soft">
+              <CardHeader>
+                <div className="p-2 rounded-md bg-emerald-100 w-fit mb-2"><Sparkles className="h-5 w-5 text-emerald-600" /></div>
+                <CardTitle>Study Planner (Coming Soon)</CardTitle>
+                <CardDescription>Personalized plans and quiz generator to master topics.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </section>
+
+        {/* Use Cases */}
+        <section className="py-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Built for how you study</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Cramming for exams */}
+            <Card className="border-0 shadow-soft bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="p-2 rounded-md bg-amber-100"><Timer className="h-5 w-5 text-amber-600" /></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Cramming for exams</h3>
+                    <p className="text-sm text-gray-600">Get short, clear notes so you can review fast.</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Auto‑highlight key definitions and formulas</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> One‑page cheat sheets from long docs</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Time‑boxed summaries (2, 5, 10 min)</li>
+                </ul>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Avg 3× faster review</span>
+                  <Link href="/login"><Button size="sm" variant="outline" className="cursor-pointer">Try summarizer</Button></Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Group flashcards */}
+            <Card className="border-0 shadow-soft bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="p-2 rounded-md bg-blue-100"><Users className="h-5 w-5 text-blue-600" /></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Making flashcards for group study</h3>
+                    <p className="text-sm text-gray-600">Generate cards in one click and share with your team.</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Smart cloze deletions and distractors</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Export to Anki or use built‑in review</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Share sets with a link</li>
+                </ul>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Team‑ready in minutes</span>
+                  <Link href="/login"><Button size="sm" variant="outline" className="cursor-pointer">Build flashcards</Button></Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Summarizing readings */}
+            <Card className="border-0 shadow-soft bg-white">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="p-2 rounded-md bg-indigo-100"><BookOpen className="h-5 w-5 text-indigo-600" /></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Summarizing long readings</h3>
+                    <p className="text-sm text-gray-600">Turn dense articles into approachable bullet points.</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Section‑by‑section breakdowns with citations</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Extract figures, tables, and key arguments</li>
+                  <li className="flex items-start gap-2"><Check className="h-4 w-4 text-purple-600 mt-0.5" /> Translate and simplify technical language</li>
+                </ul>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">Keep the key insights</span>
+                  <Link href="/login"><Button size="sm" variant="outline" className="cursor-pointer">Summarize a PDF</Button></Link>
                 </div>
               </CardContent>
             </Card>
           </div>
+        </section>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card className="bg-white border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">AI Study Tools</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Link href="/login" className="block">
-                  <Button variant="outline" className="w-full justify-start h-auto p-4 cursor-pointer hover:bg-purple-50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-purple-100">
-                        <FileText className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">AI Notes</div>
-                        <div className="text-sm text-gray-600">Create & summarize notes</div>
-                      </div>
-                    </div>
-                  </Button>
-                </Link>
-                
-                <Link href="/login" className="block">
-                  <Button variant="outline" className="w-full justify-start h-auto p-4 cursor-pointer hover:bg-blue-50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-blue-100">
-                        <BookOpen className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">AI Flashcards</div>
-                        <div className="text-sm text-gray-600">Study with AI-generated cards</div>
-                      </div>
-                    </div>
-                  </Button>
-                </Link>
-                
-                <Link href="/login" className="block">
-                  <Button variant="outline" className="w-full justify-start h-auto p-4 cursor-pointer hover:bg-orange-50">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-orange-100">
-                        <Upload className="h-5 w-5 text-orange-600" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-gray-900">File Upload</div>
-                        <div className="text-sm text-gray-600">Process documents with AI</div>
-                      </div>
-                    </div>
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Features */}
-            <Card className="bg-white border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">Why Choose Briefly?</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="p-1 rounded-full bg-green-100 mt-1">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">100% Free</p>
-                    <p className="text-xs text-gray-600">No hidden costs or subscriptions</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-1 rounded-full bg-blue-100 mt-1">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">AI-Powered</p>
-                    <p className="text-xs text-gray-600">Advanced AI for better learning</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-1 rounded-full bg-purple-100 mt-1">
-                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Easy to Use</p>
-                    <p className="text-xs text-gray-600">Intuitive interface for everyone</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Testimonials */}
+        <section className="py-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">What students say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1,2,3].map((i) => (
+              <Card key={i} className="border-0 shadow-soft bg-white">
+                <CardContent className="p-6">
+                  <Quote className="h-5 w-5 text-purple-600 mb-3" />
+                  <p className="text-gray-700">“This saved me hours. I uploaded lecture slides and got clean notes and flashcards instantly.”</p>
+                  <p className="mt-4 text-sm text-gray-500">— Student, Computer Science</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-20">
+          <div className="rounded-3xl bg-gradient-to-r from-purple-600 to-indigo-600 shadow-soft-lg p-8 sm:p-10 text-white relative overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-10">
+              {/* Left: Narrative + proof */}
+              <div className="md:col-span-7">
+                <h3 className="text-3xl font-semibold leading-tight">Start studying smarter today</h3>
+                <p className="text-white/85 mt-3 text-base">Create your first summary in under 2 minutes. No credit card required.</p>
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-lg bg-white/10 ring-1 ring-white/20 px-4 py-3">
+                    <p className="text-sm font-medium">Private by default</p>
+                    <p className="text-xs text-white/80">Your files stay on your account</p>
+                  </div>
+                  <div className="rounded-lg bg-white/10 ring-1 ring-white/20 px-4 py-3">
+                    <p className="text-sm font-medium">Export anywhere</p>
+                    <p className="text-xs text-white/80">Notes & flashcards in seconds</p>
+                  </div>
+                  <div className="rounded-lg bg-white/10 ring-1 ring-white/20 px-4 py-3">
+                    <p className="text-sm font-medium">Quick sign in</p>
+                    <p className="text-xs text-white/80">Google login supported</p>
+                  </div>
+                </div>
+                <div className="mt-6 flex items-center gap-6 text-sm">
+                  <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-300"></span> No setup needed</div>
+                  <div className="hidden sm:flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-300"></span> Free forever plan</div>
+                </div>
+              </div>
+
+              {/* Right: Action card */}
+              <div className="md:col-span-5">
+                <div className="rounded-2xl bg-white shadow-soft-lg p-6">
+                  <p className="text-gray-900 text-lg font-semibold">Join Briefly free</p>
+                  <p className="text-gray-600 text-sm mt-1">Summaries, notes, and flashcards included.</p>
+                  <div className="mt-5 flex flex-col gap-3">
+                    <Link href="/login" className="contents">
+                      <Button size="lg" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white cursor-pointer">Get Started Free</Button>
+                    </Link>
+                    <Link href="/login" className="contents">
+                      <Button size="lg" variant="outline" className="w-full border-gray-300 text-gray-800 hover:bg-gray-50 cursor-pointer">Try without account</Button>
+                    </Link>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+                    <span>No credit card</span>
+                    <span>Cancel anytime</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white/60 backdrop-blur-sm border-t border-white/20 mt-16">
+      <footer className="bg-white/60 backdrop-blur-sm border-t border-white/20 mt-8">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <LogoText className="text-xl mb-4" />
               <p className="text-gray-600 text-sm mb-4 max-w-md">
-                Free AI-powered study tools for students and professionals. 
-                Upload documents, generate summaries, and create flashcards with the power of artificial intelligence.
+                Free AI-powered study tools for students and professionals. Upload documents, generate summaries, and create flashcards.
               </p>
               <div className="flex space-x-4">
                 <a href="#" className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -339,7 +355,6 @@ export default function LandingPage() {
                 </a>
               </div>
             </div>
-            
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-4">AI Tools</h3>
               <ul className="space-y-2">
@@ -349,7 +364,6 @@ export default function LandingPage() {
                 <li><a href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">AI Summarizer</a></li>
               </ul>
             </div>
-            
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Support</h3>
               <ul className="space-y-2">
@@ -360,12 +374,9 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          
           <div className="border-t border-gray-200 mt-8 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-sm text-gray-500">
-                © 2024 Briefly. All rights reserved. Made with ❤️ for students.
-              </p>
+              <p className="text-sm text-gray-500">© 2024 Briefly. All rights reserved.</p>
               <div className="flex items-center space-x-4 mt-4 md:mt-0">
                 <span className="text-sm text-gray-500">Free AI Tools for Education</span>
                 <div className="flex items-center space-x-1">

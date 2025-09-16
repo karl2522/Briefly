@@ -95,3 +95,87 @@ body {
   z-index: 99999 !important;
   position: relative !important;
 }
+
+/* Subtle shake animation for error feedback */
+@keyframes subtle-shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-shake {
+  animation: subtle-shake 300ms ease;
+}
+
+/* Gentle float animation for background icons */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float-y 10s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-y 14s ease-in-out infinite;
+}
+
+.animate-float-alt {
+  animation: float-y 12s ease-in-out infinite;
+}
+
+@keyframes drift-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(12px); }
+}
+
+.animate-drift {
+  animation: drift-x 16s ease-in-out infinite;
+}
+
+.animate-drift-alt {
+  animation: drift-x 20s ease-in-out infinite;
+}
+
+@keyframes dash-move {
+  to { stroke-dashoffset: -200; }
+}
+
+.animate-dash {
+  stroke-dasharray: 4 6;
+  animation: dash-move 20s linear infinite;
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 8s ease-in-out infinite;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+@keyframes slow-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-slow-spin {
+  animation: slow-spin 24s linear infinite;
+}
+
+.animation-delay-2s { animation-delay: 2s; }
+.animation-delay-4s { animation-delay: 4s; }
+.animation-delay-6s { animation-delay: 6s; }
+.animation-delay-1s { animation-delay: 1s; }
+.animation-delay-3s { animation-delay: 3s; }
+.animation-delay-5s { animation-delay: 5s; }
+.animation-delay-7s { animation-delay: 7s; }
